@@ -18,7 +18,7 @@ body {
     height: 1vw;
     border-radius: 10px;
     float: left;
-    outline: 1px solid red;
+    outline: 1px solid rgb(43, 34, 34);
 }
 
 .food {
