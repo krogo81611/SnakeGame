@@ -58,8 +58,11 @@ let currentHeadPosition = TOTAL_PIXEL_COUNT/2;
 //Set starting length
 let snakeLength = 200;
 
-//Start moving snake
+
+//Start moving snake wrap around to other side of board if needed
 const moveSnake = () => {
+    totalDistanceTraveled++
+    document.querySelector('#pointsTraveled').innerText = totalDistanceTraveled;
     switch(snakeCurrentDirection) {
         case LEFT_DIR:
             --currentHeadPosition;
@@ -93,9 +96,54 @@ const moveSnake = () => {
             break;
     }
 
+    //Accessed the correct pixel within the HTML collection
     let nextSnakeHeadPixel = gameBoardPixels[currentHeadPosition];
     
+    //Check if snakehead interesects with body.
     if (nextSnakeHeadPixel.classList.contains('snakeBodyPixel')) {
+        clearInterval(moveSnakeInterval)
         alert(`You have eaten ${totalFoodEaten} food and traveled ${totalDistanceTraveled} pixels.`)
+        window.location.reload();
     }
+
+    //Assupming empty pixel, add snake body styling
+    nextSnakeHeadPixel.classList.add("snakeBodyPixel")
+
+    //Remove snake styling to keep snake appropriate length
+    setTimeout(() => {
+        nextSnakeHeadPixel.classList.remove('snakeBodyPixel')
+    }, snakeLength)
+
+    //Describe what to do when food is "eaten"
+    if(currentHeadPosition == currentFoodPosition) {
+        totalFoodEaten++;
+        document.getElementById('pointsEarned').innerText = totalFoodEaten;
+        snakeLength += 100;
+        createFood();
+    }
+
 }
+
+//Call functions to create board and start game
+
+createGameBoardPixels();
+createFood();
+
+//Set animation speed
+let moveSnakeInterval = setInterval(moveSnake,100)
+
+addEventListener('keydown', e => changeDirection(e.keyCode))
+
+
+//Mobile buttons
+const leftButton = document.getElementById('leftButton')
+const rightButton = document.getElementById('rightButton')
+const upButton = document.getElementById('upButton')
+const downButton = document.getElementById('downButton')
+
+
+//Add listeners for arrow keys
+leftButton.onclick = () => changeDirection(LEFT_DIR)
+rightButton.onclick = () => changeDirection(RIGHT_DIR)
+downButton.onclick = () => changeDirection(DOWN_DIR)
+upButton.onclick = () => changeDirection(UP_DIR)
